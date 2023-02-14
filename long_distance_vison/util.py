@@ -10,19 +10,19 @@ def detect_aruco(img: np.ndarray):
 
 def mask_black(img: np.ndarray):
     hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
-    black_thresh = cv.inRange(hsv, (0, 0, 0), (180, 255, 120))
+    black_thresh = cv.inRange(hsv, (40, 0, 0), (180, 255, 120))
     # black_thresh = cv.inRange(hsv, (60, 0, 25), (100, 80, 120))
     return black_thresh
 
 
 def mask_white(img: np.ndarray):
     hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
+    white_thresh = cv.inRange(hsv, (30, 0, 135), (180, 30, 255))
     # white_thresh = cv.inRange(hsv, (65, 10, 140), (115, 40, 255))
-    white_thresh = cv.inRange(hsv, (65, 10, 100), (115, 40, 255))
     return white_thresh
 
 
-def combine_masks(mask_a: np.ndarray, mask_b: np.ndarray, kernel_size: int=7):
+def combine_masks(mask_a: np.ndarray, mask_b: np.ndarray, kernel_size: int=5):
     kernel = np.ones((kernel_size, kernel_size), np.int8)
     mask_a_convolution = cv.filter2D(mask_a, -1, kernel)
     mask_b_convolution = cv.filter2D(mask_b, -1, kernel)
@@ -42,12 +42,13 @@ def find_contours(img_mask: np.ndarray):
     rectangular_contours = []
     for contour in contours:
         # TODO make epsilon here not a magic number
-        approx = cv.approxPolyDP(contour, 2.5, True)
+        approx = cv.approxPolyDP(contour, 3, True)
         if len(approx) == 4:
-            # contour_area = cv.contourArea(approx)
+            contour_area = cv.contourArea(approx)
             # contour_perimeter = cv.arcLength(approx, True)/4
-            # if contour_area > 250 and abs(contour_perimeter ** 2 - contour_area) < 100:
-            rectangular_contours.append(approx)
+            if contour_area > 250:  # and abs(contour_perimeter ** 2 - contour_area) < 100:
+                print(contour_area)
+                rectangular_contours.append(approx)
 
     return rectangular_contours
 
