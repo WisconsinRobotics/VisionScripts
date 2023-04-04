@@ -2,6 +2,7 @@ import cv2 as cv
 import numpy as np
 
 ARUCO_DICT = cv.aruco.getPredefinedDictionary(cv.aruco.DICT_4X4_50)
+SIDE_LENGTH_1FT = 675
 
 
 def detect_aruco(img: np.ndarray):
@@ -47,7 +48,7 @@ def find_contours(img_mask: np.ndarray):
             contour_area = cv.contourArea(approx)
             # contour_perimeter = cv.arcLength(approx, True)/4
             if contour_area > 250:  # and abs(contour_perimeter ** 2 - contour_area) < 100:
-                print(contour_area)
+                # print(contour_area)
                 rectangular_contours.append(approx)
 
     return rectangular_contours
@@ -59,6 +60,6 @@ def get_aruco_contours(img: np.ndarray):
     img_masks_combined = combine_masks(img_mask_black, img_mask_white)
 
     contours = find_contours(img_masks_combined)
-    print(contours)
+    # print(contours)
     return contours
     

@@ -39,6 +39,13 @@ def main():
         cv.aruco.drawDetectedMarkers(aruco_frame, corners, ids)
         cv.imshow('aruco frame', aruco_frame)
 
+        try:
+            side_lengths = [ np.linalg.norm(corners[0][0][i-1] - corners[0][0][i]) for i in range(len(corners[0][0]))]
+            distance_estimate = SIDE_LENGTH_1FT / max(side_lengths)
+            print(distance_estimate)
+        except:
+            pass
+
         key = cv.waitKey(1)
         if key == ord('q'):
             break

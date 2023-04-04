@@ -3,7 +3,7 @@ import numpy as np
 from util import *
 
 
-def main(filename: str='sample_4.jpg'):
+def main(filename: str='sample.jpg'):
     img = cv.imread(filename)
     cv.imshow('original img', img)
 
@@ -24,6 +24,17 @@ def main(filename: str='sample_4.jpg'):
     aruco_img = img.copy()
     (corners, ids, _) = detect_aruco(img)
     cv.aruco.drawDetectedMarkers(aruco_img, corners, ids)
+
+    side_lengths = []
+    for i in range(len(corners[0][0])):
+        side_lengths.append(np.linalg.norm(corners[0][0][i-1] - corners[0][0][i]))
+
+    print(side_lengths, sum(side_lengths)/4, (sum(side_lengths)/4) ** 2)
+    area_estimate = max(side_lengths) ** 2       
+
+    distance_estimate = SIDE_LENGTH_1FT / max(side_lengths)
+    print(area_estimate, distance_estimate)
+
     cv.imshow('aruco module', aruco_img)
 
     cv.waitKey()
