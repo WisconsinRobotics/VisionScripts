@@ -8,7 +8,7 @@ def main():
     cap = cv.VideoCapture(0)
 
     if not cap.isOpened():
-        print('Cannot open camera')
+        print("Cannot open camera")
         exit(1)
 
     cap.set(cv.CAP_PROP_FRAME_WIDTH, 1280)
@@ -16,13 +16,13 @@ def main():
 
     while cap.isOpened():
         ret, frame = cap.read()
-        
+
         if not ret:
-            print('Cannot read frame')
+            print("Cannot read frame")
             break
 
-        cv.imshow('frame', frame)
-    
+        cv.imshow("frame", frame)
+
         # img_mask_black = mask_black(frame)
         # cv.imshow('black threshold', img_mask_black)
         # img_mask_white = mask_white(frame)
@@ -31,30 +31,35 @@ def main():
         # cv.imshow('combine masks', img_masks_combined)
 
         contour_frame = frame.copy()
-        cv.drawContours(contour_frame, get_aruco_contours(contour_frame), -1, (0,0,255), 2)
-        cv.imshow('contour frame', contour_frame)
+        cv.drawContours(
+            contour_frame, get_aruco_contours(contour_frame), -1, (0, 0, 255), 2
+        )
+        cv.imshow("contour frame", contour_frame)
 
         aruco_frame = frame.copy()
         (corners, ids, _) = detect_aruco(aruco_frame)
         cv.aruco.drawDetectedMarkers(aruco_frame, corners, ids)
-        cv.imshow('aruco frame', aruco_frame)
+        cv.imshow("aruco frame", aruco_frame)
 
         try:
-            side_lengths = [ np.linalg.norm(corners[0][0][i-1] - corners[0][0][i]) for i in range(len(corners[0][0]))]
+            side_lengths = [
+                np.linalg.norm(corners[0][0][i - 1] - corners[0][0][i])
+                for i in range(len(corners[0][0]))
+            ]
             distance_estimate = SIDE_LENGTH_1FT / max(side_lengths)
             print(distance_estimate)
         except:
             pass
 
         key = cv.waitKey(1)
-        if key == ord('q'):
+        if key == ord("q"):
             break
-        elif key == ord('s'):
-             cv.imwrite('webcam-' + time.strftime("%Y%m%d_%H%M%S") + ".jpg", frame)
+        elif key == ord("s"):
+            cv.imwrite("webcam-" + time.strftime("%Y%m%d_%H%M%S") + ".jpg", frame)
 
     cap.release()
     cv.destroyAllWindows()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
